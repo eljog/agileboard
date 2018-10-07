@@ -37,15 +37,6 @@ public class InitiativeService {
         return initiativeRepository.findAll();
     }
 
-//    public Initiative createInitiative(Initiative initiative, long ownerId) {
-//        Optional<User> userOptional = userRepository.findById(ownerId);
-//        if(userOptional.isPresent()) {
-//            initiative.setOwner(userOptional.get());
-//            return initiativeRepository.save(initiative);
-//        }
-//        throw new RuntimeException("No user found with ID: " + ownerId);
-//    }
-
     public Initiative createInitiative(Initiative initiative) throws InvalidRecordExeption {
         try {
             User owner = getValidatedOwner(initiative.getOwner());
@@ -60,7 +51,7 @@ public class InitiativeService {
     }
 
     private void isValidInitiative(Initiative initiative) throws InvalidRecordExeption {
-        if(StringUtils.isEmpty(initiative.getName())) {
+        if (StringUtils.isEmpty(initiative.getName())) {
             throw new InvalidRecordExeption("One or more of the following mandatory fields are empty: Name");
         }
     }
