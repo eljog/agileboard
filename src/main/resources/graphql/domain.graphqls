@@ -1,13 +1,49 @@
 schema {
     query: Query
+    mutation: Mutation
 }
 
 type Query {
     getUsers: [User]
     getUser(id: ID): User
+
+    getInitiatives: [Initiative]
+    getInitiative(id: ID): Initiative
+}
+
+type Mutation {
+    createInitiative(input: InitiativeInput): Initiative
+    createUser(input: UserInput): User
 }
 
 type User {
     id: ID
     name: String
+    username: String
+    email: String
+    password: String
+}
+
+type Initiative {
+    id: ID
+    name: String
+    details: String
+    owner: User
+    status: String
+}
+
+input UserInput {
+    id: ID
+    name: String
+    username: String
+    email: String
+    password: String
+}
+
+input InitiativeInput {
+    id: ID
+    name: String
+    details: String
+    ownerId: Int
+    status: String
 }
