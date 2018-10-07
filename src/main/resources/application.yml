@@ -4,5 +4,10 @@ spring:
     username: postgres
     password: eljo
 
+  jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: create-drop
+
 server:
   port: 8889

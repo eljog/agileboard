@@ -1,5 +1,5 @@
 query {
-    getUsers {
-        name
-    }
+  getUsers {
+    name
+  }
 }
