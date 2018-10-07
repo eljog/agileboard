@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/agileboard?currentSchema=agileboard
+    username: postgres
+    password: eljo
+
+server:
+  port: 8889
