@@ -9,11 +9,15 @@ type Query {
 
     getInitiatives: [Initiative]
     getInitiative(id: ID): Initiative
+
+    getStories: [Story]
+    getStory(id: ID): Story
 }
 
 type Mutation {
     createInitiative(input: InitiativeInput): Initiative
     createUser(input: UserInput): User
+    createStory(input: StoryInput): Story
 }
 
 type User {
@@ -32,6 +36,14 @@ type Initiative {
     status: String
 }
 
+type Story {
+    id: ID
+    name: String
+    details: String
+    owner: User
+    status: String
+}
+
 input UserInput {
     id: ID
     name: String
@@ -41,6 +53,14 @@ input UserInput {
 }
 
 input InitiativeInput {
+    id: ID
+    name: String
+    details: String
+    ownerId: Int
+    status: String
+}
+
+input StoryInput {
     id: ID
     name: String
     details: String

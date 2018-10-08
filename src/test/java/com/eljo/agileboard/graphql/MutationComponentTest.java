@@ -1,12 +1,15 @@
 package com.eljo.agileboard.graphql;
 
 import com.eljo.agileboard.domain.Initiative;
+import com.eljo.agileboard.domain.Story;
 import com.eljo.agileboard.domain.User;
 import com.eljo.agileboard.exception.InvalidRecordExeption;
 import com.eljo.agileboard.exception.InvalidUserException;
 import com.eljo.agileboard.graphql.input.InitiativeInput;
+import com.eljo.agileboard.graphql.input.StoryInput;
 import com.eljo.agileboard.graphql.input.UserInput;
 import com.eljo.agileboard.service.InitiativeService;
+import com.eljo.agileboard.service.StoryService;
 import com.eljo.agileboard.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +20,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.in;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -34,12 +37,16 @@ public class MutationComponentTest {
     @Mock
     private InitiativeService initiativeService;
 
+    @Mock
+    private StoryService storyService;
+
     @Autowired
     @InjectMocks
     private MutationComponent mutationComponent;
 
     private UserInput userInput;
     private InitiativeInput initiativeInput;
+    private StoryInput storyInput;
 
     @Test
     public void createUser() throws Exception {
@@ -48,7 +55,7 @@ public class MutationComponentTest {
         User user = mutationComponent.createUser(userInput);
 
         verify(userService, times(1)).createUser(any());
-        assertThat("name").isEqualTo(user.getName());
+        assertNotNull(user);
     }
 
     @Test
@@ -60,8 +67,6 @@ public class MutationComponentTest {
             assertFalse(true);
         } catch (InvalidUserException e) {
             assertTrue(true);
-        } catch (Exception e) {
-            assertFalse(true);
         }
 
         verify(userService, times(1)).createUser(any());
@@ -74,7 +79,7 @@ public class MutationComponentTest {
         Initiative initiative = mutationComponent.createInitiative(initiativeInput);
 
         verify(initiativeService, times(1)).createInitiative(any());
-        assertThat("details").isEqualTo(initiative.getDetails());
+        assertNotNull(initiative);
     }
 
     @Test
@@ -86,11 +91,36 @@ public class MutationComponentTest {
             assertTrue(false);
         } catch (InvalidRecordExeption e) {
             assertTrue(true);
-        } catch (Exception e) {
-            assertTrue(false);
         }
 
         verify(initiativeService, times(1)).createInitiative(any());
+    }
+
+    @Test
+    public void createStory() throws Exception {
+        when(storyService.createStory(any())).thenReturn(storyInput.convertToStory());
+
+        Story story = mutationComponent.createStory(storyInput);
+
+        verify(storyService, times(1)).createStory(any());
+        assertNotNull(story);
+    }
+
+    @Test
+    public void createStory_Exception() throws Exception {
+        when(storyService.createStory(any())).thenThrow(InvalidRecordExeption.class);
+
+        Story story = null;
+
+        try {
+            story = mutationComponent.createStory(storyInput);
+            assertTrue(false);
+        } catch (InvalidRecordExeption invalidRecordExeption) {
+            assertTrue(true);
+        }
+
+        verify(storyService, times(1)).createStory(any());
+        assertNull(story);
     }
 
 
@@ -107,6 +137,12 @@ public class MutationComponentTest {
         initiativeInput.setName("name");
         initiativeInput.setOwnerId(1);
         initiativeInput.setStatus("status");
+
+        storyInput = new StoryInput();
+        storyInput.setDetails("details");
+        storyInput.setName("name");
+        storyInput.setOwnerId(1);
+        storyInput.setStatus("status");
     }
 
 }

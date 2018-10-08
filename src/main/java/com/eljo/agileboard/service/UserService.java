@@ -2,12 +2,10 @@ package com.eljo.agileboard.service;
 
 import com.eljo.agileboard.domain.User;
 import com.eljo.agileboard.exception.InvalidUserException;
-import com.eljo.agileboard.graphql.input.UserInput;
 import com.eljo.agileboard.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 /**

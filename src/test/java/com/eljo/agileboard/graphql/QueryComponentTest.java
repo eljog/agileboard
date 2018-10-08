@@ -1,8 +1,10 @@
 package com.eljo.agileboard.graphql;
 
 import com.eljo.agileboard.domain.Initiative;
+import com.eljo.agileboard.domain.Story;
 import com.eljo.agileboard.domain.User;
 import com.eljo.agileboard.service.InitiativeService;
+import com.eljo.agileboard.service.StoryService;
 import com.eljo.agileboard.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -26,8 +29,12 @@ public class QueryComponentTest {
 
     @Mock
     private InitiativeService initiativeService;
+
     @Mock
     private UserService userService;
+
+    @Mock
+    private StoryService storyService;
 
     @Autowired
     @InjectMocks
@@ -35,13 +42,7 @@ public class QueryComponentTest {
 
     private User user;
     private Initiative initiative;
-
-    @Before
-    public void setUp() {
-        this.user = new User("username", "password", "email", "name");
-        this.user.setId(1);
-        this.initiative = new Initiative("name", "details", user, "status");
-    }
+    private Story story;
 
     @Test
     public void getUsers() throws Exception {
@@ -50,7 +51,7 @@ public class QueryComponentTest {
         Iterable<User> userIterable = queryComponent.getUsers();
 
         verify(userService, times(1)).getUsers();
-        assertThat("name").isEqualTo(userIterable.iterator().next().getName());
+        assertThat(userIterable.iterator().next()).isInstanceOf(User.class);
     }
 
     @Test
@@ -60,7 +61,7 @@ public class QueryComponentTest {
         User userReturned = queryComponent.getUser(1);
 
         verify(userService, times(1)).getUser(anyLong());
-        assertThat("username").isEqualTo(userReturned.getUsername());
+        assertNotNull(userReturned);
     }
 
     @Test
@@ -70,7 +71,7 @@ public class QueryComponentTest {
         Initiative initiativeReturned = queryComponent.getInitiative(1);
 
         verify(initiativeService, times(1)).getInitiative(anyLong());
-        assertThat("name").isEqualTo(initiativeReturned.getName());
+        assertNotNull(initiativeReturned);
     }
 
     @Test
@@ -80,7 +81,35 @@ public class QueryComponentTest {
         Iterable<Initiative> initiativeIterable = queryComponent.getInitiatives();
 
         verify(initiativeService, times(1)).getInitiatives();
-        assertThat("details").isEqualTo(initiativeIterable.iterator().next().getDetails());
+        assertThat(initiativeIterable.iterator().next()).isInstanceOf(Initiative.class);
+    }
+
+    @Test
+    public void getStory() throws Exception {
+        when(storyService.getStory(anyLong())).thenReturn(story);
+
+        Story returnedStory = queryComponent.getStory(1);
+
+        verify(storyService, times(1)).getStory(anyLong());
+        assertThat(returnedStory).isInstanceOf(Story.class);
+    }
+
+    @Test
+    public void getStories() throws Exception {
+        when(storyService.getStories()).thenReturn(Collections.singletonList(story));
+
+        Iterable<Story> storyIterable = queryComponent.getStories();
+
+        verify(storyService, times(1)).getStories();
+        assertThat(storyIterable.iterator().next()).isInstanceOf(Story.class);
+    }
+
+    @Before
+    public void setUp() {
+        this.user = new User("username", "password", "email", "name");
+        this.user.setId(1);
+        this.initiative = new Initiative("name", "details", user, "status");
+        this.story = new Story("name", "details", user, "status");
     }
 
 }
