@@ -26,6 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Created by Eljo.George on 10/7/2018.
  */
+
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 
