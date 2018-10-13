@@ -41,8 +41,16 @@ public class MutationComponent implements GraphQLMutationResolver {
         return initiativeService.createInitiative(initiative);
     }
 
-    public Story createStory(StoryInput storyInput) throws InvalidRecordExeption {
+    public Story createOrUpdateStory(StoryInput storyInput) throws InvalidRecordExeption {
         Story story = storyInput.convertToStory();
-        return storyService.createStory(story);
+        return storyService.createOrUpdateStory(story);
+    }
+
+    public Story createStory(StoryInput storyInput) throws InvalidRecordExeption {
+        return this.createOrUpdateStory(storyInput);
+    }
+
+    public Story updateStory(StoryInput storyInput) throws InvalidRecordExeption {
+        return this.createOrUpdateStory(storyInput);
     }
 }

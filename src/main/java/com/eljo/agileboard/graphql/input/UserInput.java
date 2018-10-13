@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class UserInput {
-    private long id;
+    private Long id;
     private String username;
     private String password;
     private String email;

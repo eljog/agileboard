@@ -45,10 +45,13 @@ public class InitiativeServiceTest {
     private InitiativeService initiativeService;
 
     private Initiative initiative;
+    private User user;
 
     @Before
     public void setUp() throws Exception {
-        this.initiative = new Initiative("name", "details", new User(), "status");
+        this.user = new User("username", "password", "email", "name");
+        user.setId(1L);
+        this.initiative = new Initiative("name", "details", user, "status");
     }
 
     @Test
@@ -84,7 +87,7 @@ public class InitiativeServiceTest {
     @Test
     public void createInitiative() throws Exception {
         when(initiativeRepository.save(any())).thenReturn(initiative);
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(new User()));
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
 
         Initiative savedInitiative = initiativeService.createInitiative(initiative);
 
@@ -117,7 +120,7 @@ public class InitiativeServiceTest {
     @Test
     public void createInitiative_missingMandatoryField() throws Exception {
         initiative.setName(null);
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(new User()));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
 
         Initiative savedInitiative= null;
         try {

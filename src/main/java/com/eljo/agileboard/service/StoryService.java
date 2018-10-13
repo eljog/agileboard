@@ -7,6 +7,7 @@ import com.eljo.agileboard.exception.InvalidUserException;
 import com.eljo.agileboard.repository.StoryRepository;
 import com.eljo.agileboard.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,16 +38,42 @@ public class StoryService {
         return storyRepository.findAll();
     }
 
-    public Story createStory(Story story) throws InvalidRecordExeption {
+    public Story createOrUpdateStory(Story story) throws InvalidRecordExeption {
         try {
             isValidStory(story);
         } catch (InvalidUserException e) {
             throw new InvalidRecordExeption("Invalid Story record!", e);
         }
+
+        if (story.getId() != null) {
+            return this.updateStory(story);
+        }
+
+        return createStory(story);
+    }
+
+    private Story createStory(Story story) {
+        return saveStory(story);
+    }
+
+    private Story updateStory(Story story) throws InvalidRecordExeption {
+        if (!storyRepository.findById(story.getId()).isPresent()) {
+            throw new InvalidRecordExeption("No Story exists with given id: " + story.getId());
+        }
+
+        return saveStory(story);
+    }
+
+    @NotNull
+    private Story saveStory(Story story) {
         return storyRepository.save(story);
     }
 
     private void isValidStory(Story story) throws InvalidRecordExeption, InvalidUserException {
+        if (story == null) {
+            throw new InvalidRecordExeption("Invalid Story record!");
+        }
+
         if (StringUtils.isEmpty(story.getName()) || story.getOwner() == null) {
             throw new InvalidRecordExeption("One or more of the following mandatory fields are empty: Name, Owner");
         }

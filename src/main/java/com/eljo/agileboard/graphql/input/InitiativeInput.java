@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InitiativeInput {
-    private long id;
+    private Long id;
     private String name;
     private String details;
     private long ownerId;

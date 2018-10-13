@@ -107,7 +107,7 @@ public class QueryComponentTest {
     @Before
     public void setUp() {
         this.user = new User("username", "password", "email", "name");
-        this.user.setId(1);
+        this.user.setId(1L);
         this.initiative = new Initiative("name", "details", user, "status");
         this.story = new Story("name", "details", user, "status");
     }

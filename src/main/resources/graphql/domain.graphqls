@@ -18,6 +18,7 @@ type Mutation {
     createInitiative(input: InitiativeInput): Initiative
     createUser(input: UserInput): User
     createStory(input: StoryInput): Story
+    updateStory(input: StoryInput): Story
 }
 
 type User {

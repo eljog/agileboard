@@ -7,6 +7,7 @@ import com.eljo.agileboard.exception.InvalidUserException;
 import com.eljo.agileboard.repository.InitiativeRepository;
 import com.eljo.agileboard.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,9 +18,11 @@ import java.util.Optional;
 @Service
 public class InitiativeService {
 
+    @Autowired
     private InitiativeRepository initiativeRepository;
     private UserRepository userRepository;
 
+    @Autowired
     public InitiativeService(InitiativeRepository initiativeRepository, UserRepository userRepository) {
         this.initiativeRepository = initiativeRepository;
         this.userRepository = userRepository;

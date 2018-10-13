@@ -6,13 +6,12 @@ import com.eljo.agileboard.exception.InvalidRecordExeption;
 import com.eljo.agileboard.exception.InvalidUserException;
 import com.eljo.agileboard.repository.StoryRepository;
 import com.eljo.agileboard.repository.UserRepository;
-import org.assertj.core.api.Assertions;
+import org.assertj.core.error.AnyElementShouldMatch;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,19 +38,22 @@ public class StoryServiceTest {
     @InjectMocks
     private StoryService storyService;
 
-    private Story story;
+    private Story newStory;
+    private Story existingStory;
     private User user;
 
     @Before
     public void setUp() {
         this.user = new User("username", "password", "email", "name");
-        this.story = new Story("name", "details", user, "status");
-        this.story.setId(1);
+        user.setId(1L);
+        this.newStory = new Story("name", "details", user, "status");
+        this.existingStory = new Story("name", "details", user, "status");
+        this.existingStory.setId(Long.valueOf(1));
     }
 
     @Test
     public void getStory() throws Exception {
-        when(storyRepository.findById(anyLong())).thenReturn(Optional.ofNullable(story));
+        when(storyRepository.findById(anyLong())).thenReturn(Optional.ofNullable(existingStory));
 
         Story returnedStory = storyService.getStory(1);
 
@@ -72,7 +74,7 @@ public class StoryServiceTest {
 
     @Test
     public void getStories() throws Exception {
-        when(storyRepository.findAll()).thenReturn(Collections.singletonList(story));
+        when(storyRepository.findAll()).thenReturn(Collections.singletonList(newStory));
 
         Iterable<Story> storyIterable = storyService.getStories();
 
@@ -82,10 +84,10 @@ public class StoryServiceTest {
 
     @Test
     public void createStory() throws Exception {
-        when(storyRepository.save(any())).thenReturn(story);
+        when(storyRepository.save(any())).thenReturn(existingStory);
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
 
-        Story savedStory = storyService.createStory(story);
+        Story savedStory = storyService.createOrUpdateStory(newStory);
 
         verify(storyRepository, times(1)).save(any());
         verify(userRepository, times(1)).findById(anyLong());
@@ -99,7 +101,7 @@ public class StoryServiceTest {
 
         Story savedStory = null;
         try {
-            savedStory = storyService.createStory(story);
+            savedStory = storyService.createOrUpdateStory(newStory);
             assertTrue(false);
         } catch(InvalidRecordExeption e) {
             if(e.getCause() instanceof InvalidUserException) {
@@ -117,11 +119,100 @@ public class StoryServiceTest {
 
     @Test
     public void createStory_withoutMandatoryFields() throws Exception {
-        story.setName(null);
+        newStory.setName(null);
 
         Story savedStory = null;
         try {
-            savedStory = storyService.createStory(story);
+            savedStory = storyService.createOrUpdateStory(newStory);
+            assertTrue(false);
+        } catch(InvalidRecordExeption e) {
+            assertTrue(true);
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+
+        verify(storyRepository, never()).save(any());
+        assertNull(savedStory);
+    }
+
+    @Test
+    public void updateStory() throws Exception {
+        when(storyRepository.save(any())).thenReturn(existingStory);
+        when(storyRepository.findById(anyLong())).thenReturn(Optional.ofNullable(existingStory));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+
+        Story savedStory = storyService.createOrUpdateStory(existingStory);
+
+        verify(storyRepository, times(1)).save(any());
+        verify(userRepository, times(1)).findById(anyLong());
+        assertNotNull(savedStory);
+        assertThat(savedStory.getId()).isGreaterThan(0L);
+    }
+
+    @Test
+    public void updateStory_nonExisting() throws Exception {
+        when(storyRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+
+        Story savedStory = null;
+        try {
+            savedStory = storyService.createOrUpdateStory(existingStory);
+            assertTrue(false);
+        } catch(InvalidRecordExeption e) {
+            assertTrue(true);
+        }
+
+        verify(storyRepository, never()).save(any());
+        verify(storyRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
+        assertNull(savedStory);
+    }
+
+    @Test
+    public void updateStory_withInvalidOwner() throws Exception {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+
+        Story savedStory = null;
+        try {
+            savedStory = storyService.createOrUpdateStory(existingStory);
+            assertTrue(false);
+        } catch(InvalidRecordExeption e) {
+            if(e.getCause() instanceof InvalidUserException) {
+                assertTrue(true);
+            } else {
+                assertTrue(false);
+            }
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+
+        verify(storyRepository, never()).save(any());
+        assertNull(savedStory);
+    }
+
+    @Test
+    public void updateStory_withoutMandatoryFields() throws Exception {
+        existingStory.setName(null);
+
+        Story savedStory = null;
+        try {
+            savedStory = storyService.createOrUpdateStory(existingStory);
+            assertTrue(false);
+        } catch(InvalidRecordExeption e) {
+            assertTrue(true);
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+
+        verify(storyRepository, never()).save(any());
+        assertNull(savedStory);
+    }
+
+    @Test
+    public void createOrUpdateStory_nulls() throws Exception {
+        Story savedStory = null;
+        try {
+            savedStory = storyService.createOrUpdateStory(null);
             assertTrue(false);
         } catch(InvalidRecordExeption e) {
             assertTrue(true);
