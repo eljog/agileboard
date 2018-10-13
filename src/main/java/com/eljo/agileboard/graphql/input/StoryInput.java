@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StoryInput {
-    private long id;
+    private Long id;
     private String name;
     private String details;
     private long ownerId;

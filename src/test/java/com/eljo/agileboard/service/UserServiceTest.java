@@ -101,7 +101,7 @@ public class UserServiceTest {
     @Before
     public void setUp() {
         this.user = new User("username", "password", "email", "name");
-        this.user.setId(1);
+        this.user.setId(1L);
     }
 
 }

@@ -98,28 +98,28 @@ public class MutationComponentTest {
 
     @Test
     public void createStory() throws Exception {
-        when(storyService.createStory(any())).thenReturn(storyInput.convertToStory());
+        when(storyService.createOrUpdateStory(any())).thenReturn(storyInput.convertToStory());
 
-        Story story = mutationComponent.createStory(storyInput);
+        Story story = mutationComponent.createOrUpdateStory(storyInput);
 
-        verify(storyService, times(1)).createStory(any());
+        verify(storyService, times(1)).createOrUpdateStory(any());
         assertNotNull(story);
     }
 
     @Test
     public void createStory_Exception() throws Exception {
-        when(storyService.createStory(any())).thenThrow(InvalidRecordExeption.class);
+        when(storyService.createOrUpdateStory(any())).thenThrow(InvalidRecordExeption.class);
 
         Story story = null;
 
         try {
-            story = mutationComponent.createStory(storyInput);
+            story = mutationComponent.createOrUpdateStory(storyInput);
             assertTrue(false);
         } catch (InvalidRecordExeption invalidRecordExeption) {
             assertTrue(true);
         }
 
-        verify(storyService, times(1)).createStory(any());
+        verify(storyService, times(1)).createOrUpdateStory(any());
         assertNull(story);
     }
 

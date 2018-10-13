@@ -36,14 +36,17 @@ dependencies {
 
 	// GraphQL
 
-	// https://mvnrepository.com/artifact/com.graphql-java/graphql-spring-boot-autoconfigure
-	compile group: 'com.graphql-java', name: 'graphql-spring-boot-autoconfigure', version: '5.0.2'
 	// https://mvnrepository.com/artifact/com.graphql-java/graphql-spring-boot-starter
-	compile group: 'com.graphql-java', name: 'graphql-spring-boot-starter', version: '5.0.2'
-	// https://mvnrepository.com/artifact/com.graphql-java/graphql-java-tools
-	compile group: 'com.graphql-java', name: 'graphql-java-tools', version: '5.2.4'
+	// Using 4.4.0 to avoid error with SpringRunner tests.
+	// Error creating bean with name 'serverEndpointExporter' defined in class path resource [com/oembedler/moon/graphql/boot/GraphQLWebAutoConfiguration.class]:
+	// Invocation of init method failed; nested exception is java.lang.IllegalStateException: javax.websocket.server.ServerContainer not available
+	compile group: 'com.graphql-java', name: 'graphql-spring-boot-starter', version: '4.4.0'
+
 	// https://mvnrepository.com/artifact/com.graphql-java/graphql-spring-boot-starter-test
 	compile group: 'com.graphql-java', name: 'graphql-spring-boot-starter-test', version: '5.0.2'
+
 	// https://mvnrepository.com/artifact/com.graphql-java/graphiql-spring-boot-starter
 	compile group: 'com.graphql-java', name: 'graphiql-spring-boot-starter', version: '5.0.2'
+
+
 }
