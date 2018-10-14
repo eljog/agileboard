@@ -28,7 +28,7 @@ public class InitiativeService {
         this.userRepository = userRepository;
     }
 
-    public Initiative getInitiative(long id) {
+    public Initiative getInitiative(Long id) {
         Optional<Initiative> initiativeOptional = initiativeRepository.findById(id);
         if (initiativeOptional.isPresent()) {
             return initiativeOptional.get();

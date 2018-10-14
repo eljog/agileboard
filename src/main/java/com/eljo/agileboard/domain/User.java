@@ -23,6 +23,9 @@ public class User {
     private String email;
     private String name;
 
+    @OneToOne
+    private Project project;
+
     public User(String username, String password, String email, String name) {
         this.username = username;
         this.password = password;

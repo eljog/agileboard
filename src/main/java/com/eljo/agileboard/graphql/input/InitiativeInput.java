@@ -16,7 +16,7 @@ public class InitiativeInput {
     private Long id;
     private String name;
     private String details;
-    private long ownerId;
+    private Long ownerId;
     private String status;
 
     public Initiative convertToInitiative() {

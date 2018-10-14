@@ -1,5 +1,6 @@
 package com.eljo.agileboard.repository;
 
+import com.eljo.agileboard.domain.Project;
 import com.eljo.agileboard.domain.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -9,4 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
+    Iterable<User> findByProject(Project project);
 }

@@ -1,14 +1,17 @@
 package com.eljo.agileboard.graphql;
 
 import com.eljo.agileboard.domain.Initiative;
+import com.eljo.agileboard.domain.Project;
 import com.eljo.agileboard.domain.Story;
 import com.eljo.agileboard.domain.User;
 import com.eljo.agileboard.exception.InvalidRecordExeption;
 import com.eljo.agileboard.exception.InvalidUserException;
 import com.eljo.agileboard.graphql.input.InitiativeInput;
+import com.eljo.agileboard.graphql.input.ProjectInput;
 import com.eljo.agileboard.graphql.input.StoryInput;
 import com.eljo.agileboard.graphql.input.UserInput;
 import com.eljo.agileboard.service.InitiativeService;
+import com.eljo.agileboard.service.ProjectService;
 import com.eljo.agileboard.service.StoryService;
 import com.eljo.agileboard.service.UserService;
 import org.junit.Before;
@@ -19,7 +22,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.assertj.core.api.Assertions.in;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,6 +46,9 @@ public class MutationComponentTest {
     @Mock
     private StoryService storyService;
 
+    @Mock
+    private ProjectService projectService;
+
     @Autowired
     @InjectMocks
     private MutationComponent mutationComponent;
@@ -47,6 +56,9 @@ public class MutationComponentTest {
     private UserInput userInput;
     private InitiativeInput initiativeInput;
     private StoryInput storyInput;
+    private ProjectInput projectInput;
+    private User user;
+    private Project project;
 
     @Test
     public void createUser() throws Exception {
@@ -123,6 +135,68 @@ public class MutationComponentTest {
         assertNull(story);
     }
 
+    @Test
+    public void createProject() throws Exception {
+        when(projectService.createOrUpdateProject(any())).thenReturn(projectInput.convertToProject());
+
+        Project project = mutationComponent.createOrUpdateProject(projectInput);
+
+        verify(projectService, times(1)).createOrUpdateProject(any());
+        assertNotNull(project);
+    }
+
+    @Test
+    public void createProject_Exception() throws Exception {
+        when(projectService.createOrUpdateProject(any())).thenThrow(InvalidRecordExeption.class);
+
+        Project project = null;
+
+        try {
+            project = mutationComponent.createOrUpdateProject(projectInput);
+            assertTrue(false);
+        } catch (InvalidRecordExeption invalidRecordExeption) {
+            assertTrue(true);
+        }
+
+        verify(projectService, times(1)).createOrUpdateProject(any());
+        assertNull(project);
+    }
+
+    @Test
+    public void addProjectToUser() throws Exception {
+        when(userService.addProjectToUser(any(), any())).thenReturn(user);
+
+        User user = mutationComponent.addProjectToUser(1L, 2L);
+
+        verify(userService, times(1)).addProjectToUser(any(), any());
+        assertNotNull(user);
+    }
+
+    @Test
+    public void addProjectToUser_exception() throws Exception {
+        when(userService.addProjectToUser(any(), any()))
+                .thenThrow(InvalidRecordExeption.class)
+                .thenThrow(InvalidUserException.class);
+
+        User user = null;
+        try {
+            user = mutationComponent.addProjectToUser(1L, 2L);
+            failBecauseExceptionWasNotThrown(InvalidRecordExeption.class);
+        } catch (InvalidRecordExeption e) {
+            // Pass
+        }
+
+        try {
+            user = mutationComponent.addProjectToUser(1L, 2L);
+            failBecauseExceptionWasNotThrown(InvalidUserException.class);
+        } catch (InvalidUserException e) {
+            // Pass
+        }
+
+        verify(userService, times(2)).addProjectToUser(any(), any());
+        assertNull(user);
+    }
+
 
     @Before
     public void setUp() {
@@ -135,14 +209,23 @@ public class MutationComponentTest {
         initiativeInput = new InitiativeInput();
         initiativeInput.setDetails("details");
         initiativeInput.setName("name");
-        initiativeInput.setOwnerId(1);
+        initiativeInput.setOwnerId(1L);
         initiativeInput.setStatus("status");
 
         storyInput = new StoryInput();
         storyInput.setDetails("details");
         storyInput.setName("name");
-        storyInput.setOwnerId(1);
+        storyInput.setOwnerId(1L);
         storyInput.setStatus("status");
+
+        projectInput = new ProjectInput();
+        projectInput.setDescription("description");
+        projectInput.setName("name");
+        projectInput.setCreatedById(1L);
+        projectInput.setCreatedOn(new Date());
+
+        this.user = new User("username", "password", "email", "name");
+        this.project = new Project("name", "description", user, new Date());
     }
 
 }
