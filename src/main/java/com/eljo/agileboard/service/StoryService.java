@@ -26,7 +26,7 @@ public class StoryService {
     @Autowired
     private UserRepository userRepository;
 
-    public Story getStory(long id) {
+    public Story getStory(Long id) {
         Optional<Story> storyOptional = storyRepository.findById(id);
         if (storyOptional.isPresent()) {
             return storyOptional.get();

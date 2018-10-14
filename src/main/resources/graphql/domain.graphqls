@@ -6,65 +6,92 @@ schema {
 type Query {
     getUsers: [User]
     getUser(id: ID): User
+    getUsersByProject(projectId: Int): [User]
 
     getInitiatives: [Initiative]
     getInitiative(id: ID): Initiative
 
     getStories: [Story]
     getStory(id: ID): Story
+
+    getProjects: [Project]
+    getProject(id: ID): Project
 }
 
 type Mutation {
     createInitiative(input: InitiativeInput): Initiative
+
     createUser(input: UserInput): User
+    addProjectToUser(projectId: Int, userId: Int): User
+
     createStory(input: StoryInput): Story
     updateStory(input: StoryInput): Story
+
+    createProject(input: ProjectInput): Project
+    updateProject(input: ProjectInput): Project
 }
 
 type User {
-    id: ID
-    name: String
-    username: String
-    email: String
-    password: String
+    id: ID!
+    name: String!
+    username: String!
+    email: String!
+    password: String!
+    project: Project
 }
 
 type Initiative {
-    id: ID
-    name: String
+    id: ID!
+    name: String!
     details: String
-    owner: User
-    status: String
+    owner: User!
+    status: String!
 }
 
 type Story {
-    id: ID
-    name: String
+    id: ID!
+    name: String!
     details: String
-    owner: User
-    status: String
+    owner: User!
+    status: String!
+}
+
+type Project {
+    id: ID!
+    name: String!
+    description: String
+    createdBy: User!
+    createdOn: String
 }
 
 input UserInput {
     id: ID
-    name: String
-    username: String
-    email: String
-    password: String
+    name: String!
+    username: String!
+    email: String!
+    password: String!
 }
 
 input InitiativeInput {
     id: ID
-    name: String
+    name: String!
     details: String
-    ownerId: Int
-    status: String
+    ownerId: Int!
+    status: String!
 }
 
 input StoryInput {
     id: ID
-    name: String
+    name: String!
     details: String
-    ownerId: Int
-    status: String
+    ownerId: Int!
+    status: String!
+}
+
+input ProjectInput {
+    id: ID
+    name: String!
+    description: String
+    createdById: Int!
+    createdOn: String
 }

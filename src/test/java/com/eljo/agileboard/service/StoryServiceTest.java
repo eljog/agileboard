@@ -55,7 +55,7 @@ public class StoryServiceTest {
     public void getStory() throws Exception {
         when(storyRepository.findById(anyLong())).thenReturn(Optional.ofNullable(existingStory));
 
-        Story returnedStory = storyService.getStory(1);
+        Story returnedStory = storyService.getStory(1L);
 
         verify(storyRepository, times(1)).findById(anyLong());
         assertNotNull(returnedStory);
@@ -66,7 +66,7 @@ public class StoryServiceTest {
     public void getStory_notFound() throws Exception {
         when(storyRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
 
-        Story returnedStory = storyService.getStory(1);
+        Story returnedStory = storyService.getStory(1L);
 
         verify(storyRepository, times(1)).findById(anyLong());
         assertNull(returnedStory);

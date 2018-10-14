@@ -58,7 +58,7 @@ public class InitiativeServiceTest {
     public void getInitiative() throws Exception {
         when(initiativeRepository.findById(anyLong())).thenReturn(Optional.ofNullable(initiative));
 
-        Initiative returnedInitiative = initiativeService.getInitiative(1);
+        Initiative returnedInitiative = initiativeService.getInitiative(1L);
 
         verify(initiativeRepository, times(1)).findById(anyLong());
         assertThat("name").isEqualTo(returnedInitiative.getName());
@@ -68,7 +68,7 @@ public class InitiativeServiceTest {
     public void getInitiative_notFound() throws Exception {
         when(initiativeRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
 
-        Initiative returnedInitiative = initiativeService.getInitiative(1);
+        Initiative returnedInitiative = initiativeService.getInitiative(1L);
 
         verify(initiativeRepository, times(1)).findById(anyLong());
         assertNull(returnedInitiative);
