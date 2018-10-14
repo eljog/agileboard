@@ -1,11 +1,11 @@
 package com.eljo.agileboard.service;
 
+import com.eljo.agileboard.domain.Project;
 import com.eljo.agileboard.domain.Story;
 import com.eljo.agileboard.domain.User;
 import com.eljo.agileboard.exception.InvalidRecordExeption;
 import com.eljo.agileboard.exception.InvalidUserException;
 import com.eljo.agileboard.repository.StoryRepository;
-import com.eljo.agileboard.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,10 @@ public class StoryService {
     private StoryRepository storyRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
+
+    @Autowired
+    private ProjectService projectService;
 
     public Story getStory(Long id) {
         Optional<Story> storyOptional = storyRepository.findById(id);
@@ -57,11 +60,41 @@ public class StoryService {
     }
 
     private Story updateStory(Story story) throws InvalidRecordExeption {
-        if (!storyRepository.findById(story.getId()).isPresent()) {
+        Optional<Story> storyOptional = storyRepository.findById(story.getId());
+        if (!storyOptional.isPresent()) {
             throw new InvalidRecordExeption("No Story exists with given id: " + story.getId());
         }
+        Story existingStory = storyOptional.get();
+        this.updateValues(existingStory, story);
+        return saveStory(existingStory);
+    }
 
-        return saveStory(story);
+    private Story updateValues(Story existingStory, Story story) {
+        if(story.getName() != null) {
+            existingStory.setName(story.getName());
+        }
+
+        if(story.getProject() != null) {
+            existingStory.setProject(story.getProject());
+        }
+
+        if(story.getOwner() != null) {
+            existingStory.setOwner(story.getOwner());
+        }
+
+        if(story.getDetails() != null) {
+            existingStory.setDetails(story.getDetails());
+        }
+
+        if(story.getPoints() != null) {
+            existingStory.setPoints(story.getPoints());
+        }
+
+        if(story.getStatus() != null) {
+            existingStory.setStatus(story.getStatus());
+        }
+
+        return existingStory;
     }
 
     @NotNull
@@ -78,11 +111,18 @@ public class StoryService {
             throw new InvalidRecordExeption("One or more of the following mandatory fields are empty: Name, Owner");
         }
 
-        Optional<User> userOptional = userRepository.findById(story.getOwner().getId());
-        if (userOptional.isPresent()) {
-            story.setOwner(userOptional.get());
+        User owner = userService.getUser(story.getOwner().getId());
+        if (owner != null) {
+            story.setOwner(owner);
         } else {
             throw new InvalidUserException("No User exists with ID: " + story.getOwner().getId());
+        }
+
+        Project project = projectService.getProject(story.getProject().getId());
+        if (project != null) {
+            story.setProject(project);
+        } else {
+            throw new InvalidRecordExeption("No Project exists with ID: " + story.getProject().getId());
         }
 
     }

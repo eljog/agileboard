@@ -54,6 +54,8 @@ type Story {
     details: String
     owner: User!
     status: String!
+    points: Int
+    project: Project
 }
 
 type Project {
@@ -66,32 +68,34 @@ type Project {
 
 input UserInput {
     id: ID
-    name: String!
-    username: String!
-    email: String!
-    password: String!
+    name: String
+    username: String
+    email: String
+    password: String
 }
 
 input InitiativeInput {
     id: ID
-    name: String!
+    name: String
     details: String
-    ownerId: Int!
-    status: String!
+    ownerId: Int
+    status: String
 }
 
 input StoryInput {
     id: ID
-    name: String!
+    name: String
     details: String
-    ownerId: Int!
-    status: String!
+    ownerId: Int
+    status: String
+    points: Int
+    projectId: Int
 }
 
 input ProjectInput {
     id: ID
-    name: String!
+    name: String
     description: String
-    createdById: Int!
+    createdById: Int
     createdOn: String
 }
