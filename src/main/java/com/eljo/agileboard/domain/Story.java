@@ -25,6 +25,11 @@ public class Story {
 
     private String name;
     private String details;
+    private Integer points;
+
+    @OneToOne
+    @JoinColumn(nullable = false)
+    private Project project;
 
     @OneToOne
     private User owner;

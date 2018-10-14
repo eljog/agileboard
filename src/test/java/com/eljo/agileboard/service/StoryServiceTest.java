@@ -1,12 +1,11 @@
 package com.eljo.agileboard.service;
 
+import com.eljo.agileboard.domain.Project;
 import com.eljo.agileboard.domain.Story;
 import com.eljo.agileboard.domain.User;
 import com.eljo.agileboard.exception.InvalidRecordExeption;
 import com.eljo.agileboard.exception.InvalidUserException;
 import com.eljo.agileboard.repository.StoryRepository;
-import com.eljo.agileboard.repository.UserRepository;
-import org.assertj.core.error.AnyElementShouldMatch;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +15,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +32,10 @@ public class StoryServiceTest {
     private StoryRepository storyRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
+
+    @Mock
+    private ProjectService projectService;
 
     @Autowired
     @InjectMocks
@@ -41,6 +44,7 @@ public class StoryServiceTest {
     private Story newStory;
     private Story existingStory;
     private User user;
+    private Project project;
 
     @Before
     public void setUp() {
@@ -49,6 +53,9 @@ public class StoryServiceTest {
         this.newStory = new Story("name", "details", user, "status");
         this.existingStory = new Story("name", "details", user, "status");
         this.existingStory.setId(Long.valueOf(1));
+        this.project = new Project(1L, "name", "description", user, new Date());
+        newStory.setProject(project);
+        existingStory.setProject(project);
     }
 
     @Test
@@ -85,26 +92,28 @@ public class StoryServiceTest {
     @Test
     public void createStory() throws Exception {
         when(storyRepository.save(any())).thenReturn(existingStory);
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        when(userService.getUser(anyLong())).thenReturn(user);
+        when(projectService.getProject(anyLong())).thenReturn(project);
 
         Story savedStory = storyService.createOrUpdateStory(newStory);
 
         verify(storyRepository, times(1)).save(any());
-        verify(userRepository, times(1)).findById(anyLong());
+        verify(userService, times(1)).getUser(anyLong());
+        verify(projectService, times(1)).getProject(anyLong());
         assertNotNull(savedStory);
         assertThat(savedStory.getId()).isGreaterThan(0L);
     }
 
     @Test
     public void createStory_withInvalidOwner() throws Exception {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(userService.getUser(anyLong())).thenReturn(null);
 
         Story savedStory = null;
         try {
             savedStory = storyService.createOrUpdateStory(newStory);
             assertTrue(false);
-        } catch(InvalidRecordExeption e) {
-            if(e.getCause() instanceof InvalidUserException) {
+        } catch (InvalidRecordExeption e) {
+            if (e.getCause() instanceof InvalidUserException) {
                 assertTrue(true);
             } else {
                 assertTrue(false);
@@ -114,6 +123,28 @@ public class StoryServiceTest {
         }
 
         verify(storyRepository, never()).save(any());
+        verify(userService, times(1)).getUser(anyLong());
+        verify(projectService, never()).getProject(anyLong());
+        assertNull(savedStory);
+    }
+
+    @Test
+    public void createStory_withInvalidProject() throws Exception {
+        when(userService.getUser(anyLong())).thenReturn(user);
+        when(projectService.getProject(anyLong())).thenReturn(null);
+
+        Story savedStory = null;
+        try {
+            savedStory = storyService.createOrUpdateStory(newStory);
+            assertTrue(false);
+        } catch (InvalidRecordExeption e) {
+
+            assertTrue(true);
+        }
+
+        verify(storyRepository, never()).save(any());
+        verify(userService, times(1)).getUser(anyLong());
+        verify(projectService, times(1)).getProject(anyLong());
         assertNull(savedStory);
     }
 
@@ -125,7 +156,7 @@ public class StoryServiceTest {
         try {
             savedStory = storyService.createOrUpdateStory(newStory);
             assertTrue(false);
-        } catch(InvalidRecordExeption e) {
+        } catch (InvalidRecordExeption e) {
             assertTrue(true);
         } catch (Exception e) {
             assertTrue(false);
@@ -139,12 +170,14 @@ public class StoryServiceTest {
     public void updateStory() throws Exception {
         when(storyRepository.save(any())).thenReturn(existingStory);
         when(storyRepository.findById(anyLong())).thenReturn(Optional.ofNullable(existingStory));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        when(userService.getUser(anyLong())).thenReturn(user);
+        when(projectService.getProject(anyLong())).thenReturn(project);
 
         Story savedStory = storyService.createOrUpdateStory(existingStory);
 
         verify(storyRepository, times(1)).save(any());
-        verify(userRepository, times(1)).findById(anyLong());
+        verify(userService, times(1)).getUser(anyLong());
+        verify(projectService, times(1)).getProject(anyLong());
         assertNotNull(savedStory);
         assertThat(savedStory.getId()).isGreaterThan(0L);
     }
@@ -152,41 +185,62 @@ public class StoryServiceTest {
     @Test
     public void updateStory_nonExisting() throws Exception {
         when(storyRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        when(userService.getUser(anyLong())).thenReturn(user);
+        when(projectService.getProject(anyLong())).thenReturn(project);
 
         Story savedStory = null;
         try {
             savedStory = storyService.createOrUpdateStory(existingStory);
             assertTrue(false);
-        } catch(InvalidRecordExeption e) {
+        } catch (InvalidRecordExeption e) {
             assertTrue(true);
         }
 
         verify(storyRepository, never()).save(any());
         verify(storyRepository, times(1)).findById(anyLong());
-        verify(userRepository, times(1)).findById(anyLong());
+        verify(userService, times(1)).getUser(anyLong());
+        verify(projectService, times(1)).getProject(anyLong());
         assertNull(savedStory);
     }
 
     @Test
     public void updateStory_withInvalidOwner() throws Exception {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(userService.getUser(anyLong())).thenReturn(null);
 
         Story savedStory = null;
         try {
             savedStory = storyService.createOrUpdateStory(existingStory);
             assertTrue(false);
-        } catch(InvalidRecordExeption e) {
-            if(e.getCause() instanceof InvalidUserException) {
+        } catch (InvalidRecordExeption e) {
+            if (e.getCause() instanceof InvalidUserException) {
                 assertTrue(true);
             } else {
                 assertTrue(false);
             }
-        } catch (Exception e) {
-            assertTrue(false);
         }
 
         verify(storyRepository, never()).save(any());
+        verify(userService, times(1)).getUser(anyLong());
+        verify(projectService, never()).getProject(anyLong());
+        assertNull(savedStory);
+    }
+
+    @Test
+    public void updateStory_withInvalidProject() throws Exception {
+        when(userService.getUser(anyLong())).thenReturn(user);
+        when(projectService.getProject(anyLong())).thenReturn(null);
+
+        Story savedStory = null;
+        try {
+            savedStory = storyService.createOrUpdateStory(existingStory);
+            assertTrue(false);
+        } catch (InvalidRecordExeption e) {
+            assertTrue(true);
+        }
+
+        verify(storyRepository, never()).save(any());
+        verify(userService, times(1)).getUser(anyLong());
+        verify(projectService, times(1)).getProject(anyLong());
         assertNull(savedStory);
     }
 
@@ -198,7 +252,7 @@ public class StoryServiceTest {
         try {
             savedStory = storyService.createOrUpdateStory(existingStory);
             assertTrue(false);
-        } catch(InvalidRecordExeption e) {
+        } catch (InvalidRecordExeption e) {
             assertTrue(true);
         } catch (Exception e) {
             assertTrue(false);
@@ -214,7 +268,7 @@ public class StoryServiceTest {
         try {
             savedStory = storyService.createOrUpdateStory(null);
             assertTrue(false);
-        } catch(InvalidRecordExeption e) {
+        } catch (InvalidRecordExeption e) {
             assertTrue(true);
         } catch (Exception e) {
             assertTrue(false);

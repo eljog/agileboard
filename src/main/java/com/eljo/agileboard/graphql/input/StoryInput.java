@@ -1,5 +1,6 @@
 package com.eljo.agileboard.graphql.input;
 
+import com.eljo.agileboard.domain.Project;
 import com.eljo.agileboard.domain.Story;
 import com.eljo.agileboard.domain.User;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,8 @@ public class StoryInput {
     private String details;
     private Long ownerId;
     private String status;
+    private Integer points;
+    private Long projectId;
 
     public Story convertToStory() {
         Story story = new Story();
@@ -28,6 +31,10 @@ public class StoryInput {
         story.setName(this.name);
         story.setId(this.id);
         story.setStatus(this.status);
+        story.setProject(new Project(this.projectId));
+        if(this.points != null) {
+            story.setPoints(this.points);
+        }
 
         return story;
     }
