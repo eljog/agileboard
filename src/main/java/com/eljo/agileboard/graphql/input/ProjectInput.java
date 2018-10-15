@@ -20,10 +20,8 @@ public class ProjectInput {
     private Long id;
     private String name;
     private String description;
-    private Long createdById;
-    private Date createdOn;
 
     public Project convertToProject() {
-        return new Project(this.id, this.name, this.description, new User(this.createdById), this.createdOn);
+        return new Project(this.id, this.name, this.description);
     }
 }

@@ -1,5 +1,6 @@
 package com.eljo.agileboard;
 
+import com.graphql.spring.boot.test.GraphQLTest;
 import com.graphql.spring.boot.test.GraphQLTestTemplate;
 import org.junit.Test;
 import org.junit.runner.RunWith;

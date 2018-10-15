@@ -5,7 +5,6 @@ import com.eljo.agileboard.domain.User;
 import com.eljo.agileboard.exception.InvalidRecordExeption;
 import com.eljo.agileboard.exception.InvalidUserException;
 import com.eljo.agileboard.repository.ProjectRepository;
-import com.eljo.agileboard.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,9 +33,6 @@ public class ProjectServiceTest {
 
     @Mock
     private ProjectRepository projectRepository;
-
-    @Mock
-    private UserRepository userRepository;
 
     @Mock
     private UserService userService;
@@ -95,13 +91,13 @@ public class ProjectServiceTest {
     @Test
     public void createProject() throws Exception {
         when(projectRepository.save(any())).thenReturn(existingProject);
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(member));
+        when(userService.getCurrentUser()).thenReturn(member);
         when(userService.addProjectToUser(any(), any())).thenReturn(member);
 
         Project savedProject = projectService.createOrUpdateProject(newProject);
 
         verify(projectRepository, times(1)).save(any());
-        verify(userRepository, times(1)).findById(anyLong());
+        verify(userService, times(1)).getCurrentUser();
         verify(userService, times(1)).addProjectToUser(any(), any());
         assertNotNull(savedProject);
         assertThat(savedProject.getId()).isGreaterThan(0L);
@@ -109,7 +105,7 @@ public class ProjectServiceTest {
 
     @Test
     public void createProject_withInvalidOwner() throws Exception {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(userService.getCurrentUser()).thenThrow(InvalidUserException.class);
 
         Project savedProject = null;
         try {
@@ -151,12 +147,12 @@ public class ProjectServiceTest {
     public void updateProject() throws Exception {
         when(projectRepository.save(any())).thenReturn(existingProject);
         when(projectRepository.findById(anyLong())).thenReturn(Optional.ofNullable(existingProject));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(member));
+        when(userService.getCurrentUser()).thenReturn(member);
 
         Project savedProject = projectService.createOrUpdateProject(existingProject);
 
         verify(projectRepository, times(1)).save(any());
-        verify(userRepository, times(1)).findById(anyLong());
+        verify(userService, times(1)).getCurrentUser();
         assertNotNull(savedProject);
         assertThat(savedProject.getId()).isGreaterThan(0L);
     }
@@ -164,7 +160,7 @@ public class ProjectServiceTest {
     @Test
     public void updateProject_nonExisting() throws Exception {
         when(projectRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(member));
+        when(userService.getCurrentUser()).thenReturn(member);
 
         Project savedProject = null;
         try {
@@ -176,13 +172,13 @@ public class ProjectServiceTest {
 
         verify(projectRepository, never()).save(any());
         verify(projectRepository, times(1)).findById(anyLong());
-        verify(userRepository, times(1)).findById(anyLong());
+        verify(userService, times(1)).getCurrentUser();
         assertNull(savedProject);
     }
 
     @Test
     public void updateProject_withInvalidCreator() throws Exception {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(userService.getCurrentUser()).thenThrow(InvalidUserException.class);
 
         Project savedProject = null;
         try {

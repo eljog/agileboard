@@ -24,7 +24,10 @@ public class Story {
     private String storyNumber;
 
     private String name;
+
+    @Column(columnDefinition="TEXT")
     private String details;
+
     private Integer points;
 
     @OneToOne
