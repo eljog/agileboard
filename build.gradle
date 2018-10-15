@@ -1,6 +1,9 @@
 buildscript {
 	ext {
 		springBootVersion = '2.0.5.RELEASE'
+		jjwtVersion = '0.9.1'
+		graphQLv4 = '4.4.0'
+		graphQLv5 = '5.0.2'
 	}
 	repositories {
 		mavenCentral()
@@ -34,19 +37,29 @@ dependencies {
 
 	// Additional Libraries
 
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: "${springBootVersion}"
+
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-configuration-processor
+	compile group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: "${springBootVersion}"
+
+
+	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
+	compile group: 'io.jsonwebtoken', name: 'jjwt', version: "${jjwtVersion}"
+
 	// GraphQL
 
 	// https://mvnrepository.com/artifact/com.graphql-java/graphql-spring-boot-starter
 	// Using 4.4.0 to avoid error with SpringRunner tests.
 	// Error creating bean with name 'serverEndpointExporter' defined in class path resource [com/oembedler/moon/graphql/boot/GraphQLWebAutoConfiguration.class]:
 	// Invocation of init method failed; nested exception is java.lang.IllegalStateException: javax.websocket.server.ServerContainer not available
-	compile group: 'com.graphql-java', name: 'graphql-spring-boot-starter', version: '4.4.0'
+	compile group: 'com.graphql-java', name: 'graphql-spring-boot-starter', version: "${graphQLv4}"
 
 	// https://mvnrepository.com/artifact/com.graphql-java/graphql-spring-boot-starter-test
-	compile group: 'com.graphql-java', name: 'graphql-spring-boot-starter-test', version: '5.0.2'
+	compile group: 'com.graphql-java', name: 'graphql-spring-boot-starter-test', version: "${graphQLv5}"
 
 	// https://mvnrepository.com/artifact/com.graphql-java/graphiql-spring-boot-starter
-	compile group: 'com.graphql-java', name: 'graphiql-spring-boot-starter', version: '5.0.2'
+	compile group: 'com.graphql-java', name: 'graphiql-spring-boot-starter', version: "${graphQLv5}"
 
 
 }

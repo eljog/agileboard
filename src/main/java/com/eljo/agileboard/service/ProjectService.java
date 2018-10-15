@@ -1,11 +1,9 @@
 package com.eljo.agileboard.service;
 
 import com.eljo.agileboard.domain.Project;
-import com.eljo.agileboard.domain.User;
 import com.eljo.agileboard.exception.InvalidRecordExeption;
 import com.eljo.agileboard.exception.InvalidUserException;
 import com.eljo.agileboard.repository.ProjectRepository;
-import com.eljo.agileboard.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +18,10 @@ import java.util.Optional;
 public class ProjectService {
 
     private ProjectRepository projectRepository;
-    private UserRepository userRepository;
     private UserService userService;
 
-    public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, UserService userService) {
+    public ProjectService(ProjectRepository projectRepository, UserService userService) {
         this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
         this.userService = userService;
     }
 
@@ -57,6 +53,7 @@ public class ProjectService {
 
     private Project createProject(Project project) throws InvalidRecordExeption, InvalidUserException {
         project.setCreatedOn(new Date());
+        project.setCreatedBy(userService.getCurrentUser());
         Project savedProject = saveProject(project);
         userService.addProjectToUser(savedProject, project.getCreatedBy());
         return savedProject;
@@ -79,15 +76,8 @@ public class ProjectService {
             throw new InvalidRecordExeption("Invalid Project record!");
         }
 
-        if (StringUtils.isEmpty(project.getName()) || project.getCreatedBy() == null) {
-            throw new InvalidRecordExeption("One or more of the following mandatory fields are empty: Name, CreatedBy");
-        }
-
-        Optional<User> userOptional = userRepository.findById(project.getCreatedBy().getId());
-        if (userOptional.isPresent()) {
-            project.setCreatedBy(userOptional.get());
-        } else {
-            throw new InvalidUserException("No User exists with ID: " + project.getCreatedBy().getId());
+        if (StringUtils.isEmpty(project.getName())) {
+            throw new InvalidRecordExeption("One or more of the following mandatory fields are empty: Name");
         }
 
     }

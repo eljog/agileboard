@@ -7,8 +7,12 @@ import com.eljo.agileboard.exception.InvalidUserException;
 import com.eljo.agileboard.repository.ProjectRepository;
 import com.eljo.agileboard.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.Optional;
 
 /**
@@ -37,6 +41,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public User getCurrentUser() throws InvalidUserException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            Optional<User> currentUserOptional = userRepository.findByUsername(authentication.getName());
+            if (currentUserOptional.isPresent()) {
+                return currentUserOptional.get();
+            }
+        }
+        throw new InvalidUserException("Unable to find authenticated user");
+    }
+
     public User createUser(User user) throws InvalidUserException {
         isValid(user);
         return userRepository.save(user);
@@ -51,7 +66,7 @@ public class UserService {
 
     public Iterable<User> fetchUsersByProject(Long projectId) throws InvalidRecordExeption {
         Optional<Project> projectOptional = projectRepository.findById(projectId);
-        if(projectOptional.isPresent()) {
+        if (projectOptional.isPresent()) {
             return userRepository.findByProject(projectOptional.get());
         }
         throw new InvalidRecordExeption("No Project exists with given id: " + projectId);
@@ -67,7 +82,7 @@ public class UserService {
 
     private User getExistingUser(User user) throws InvalidUserException {
         Optional<User> userOptional = userRepository.findById(user.getId());
-        if(!userOptional.isPresent()) {
+        if (!userOptional.isPresent()) {
             throw new InvalidUserException("No User exists with given id: " + user.getId());
         }
         return userOptional.get();
@@ -75,7 +90,7 @@ public class UserService {
 
     private Project getExistingProject(Project project) throws InvalidRecordExeption {
         Optional<Project> projectOptional = projectRepository.findById(project.getId());
-        if(!projectOptional.isPresent()) {
+        if (!projectOptional.isPresent()) {
             throw new InvalidRecordExeption("No Project exists with given id: " + project.getId());
         }
         return projectOptional.get();

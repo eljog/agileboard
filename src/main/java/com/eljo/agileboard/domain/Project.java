@@ -1,14 +1,13 @@
 package com.eljo.agileboard.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Eljo.George on 10/13/2018.
@@ -29,6 +28,7 @@ public class Project {
 
     @JoinColumn(updatable = false)
     @OneToOne
+    @JsonIgnore
     private User createdBy;
 
     @Column(updatable = false)
@@ -43,5 +43,11 @@ public class Project {
 
     public Project(Long projectId) {
         this.id = projectId;
+    }
+
+    public Project(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
     }
 }
