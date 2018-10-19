@@ -135,19 +135,20 @@ public class QueryComponentTest {
 
     @Test
     public void getUsersByProject() throws Exception {
-        when(userService.fetchUsersByProject(anyLong())).thenReturn(Collections.singletonList(user));
+        when(userService.fetchUsersByProject(any())).thenReturn(Collections.singletonList(user));
+        when(projectService.getProject(anyLong())).thenReturn(project);
 
         Iterable<User> users = queryComponent.getUsersByProject(1L);
 
-        verify(userService, times(1)).fetchUsersByProject(anyLong());
+        verify(userService, times(1)).fetchUsersByProject(any());
+        verify(projectService, times(1)).getProject(anyLong());
         assertTrue(users.iterator().hasNext());
 
     }
 
     @Test
     public void getUsersByProject_invalidProject() throws Exception {
-        when(userService.fetchUsersByProject(anyLong())).thenThrow(InvalidRecordExeption.class);
-
+        when(projectService.getProject(anyLong())).thenReturn(null);
         Iterable<User> users = null;
 
         try {
@@ -157,7 +158,8 @@ public class QueryComponentTest {
             // Passed
         }
 
-        verify(userService, times(1)).fetchUsersByProject(anyLong());
+        verify(userService, never()).fetchUsersByProject(any());
+        verify(projectService, times(1)).getProject(anyLong());
         assertNull(users);
 
     }

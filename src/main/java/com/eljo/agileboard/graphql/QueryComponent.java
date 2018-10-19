@@ -21,13 +21,13 @@ public class QueryComponent implements GraphQLQueryResolver {
     private InitiativeService initiativeService;
     private UserService userService;
     private StoryService storyService;
-    private ProjectService projecService;
+    private ProjectService projectService;
 
     public QueryComponent(InitiativeService initiativeService, UserService userService, StoryService storyService, ProjectService projecService) {
         this.initiativeService = initiativeService;
         this.userService = userService;
         this.storyService = storyService;
-        this.projecService = projecService;
+        this.projectService = projecService;
     }
 
     public Iterable<User> getUsers() {
@@ -55,14 +55,26 @@ public class QueryComponent implements GraphQLQueryResolver {
     }
 
     public Project getProject(Long id) {
-        return projecService.getProject(id);
+        return projectService.getProject(id);
     }
 
     public Iterable<Project> getProjects() {
-        return projecService.getProjects();
+        return projectService.getProjects();
     }
 
     public Iterable<User> getUsersByProject(Long projectId) throws InvalidRecordExeption {
-        return userService.fetchUsersByProject(projectId);
+        Project project = projectService.getProject(projectId);
+        if (project != null) {
+            return userService.fetchUsersByProject(project);
+        }
+        throw new InvalidRecordExeption("No Project exists with given id: " + projectId);
+    }
+
+    public Iterable<Story> getStoriesByProject(Long projectId) throws InvalidRecordExeption {
+        Project project = projectService.getProject(projectId);
+        if (project != null) {
+            return storyService.fetchStoriesByProject(project);
+        }
+        throw new InvalidRecordExeption("No Project exists with given id: " + projectId);
     }
 }

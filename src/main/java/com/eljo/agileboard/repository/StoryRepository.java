@@ -1,5 +1,6 @@
 package com.eljo.agileboard.repository;
 
+import com.eljo.agileboard.domain.Project;
 import com.eljo.agileboard.domain.Story;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -9,4 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface StoryRepository extends JpaRepository<Story, Long> {
+    Iterable<Story> findByProject(Project project);
 }

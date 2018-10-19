@@ -24,9 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.assertj.core.api.Assertions.in;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -164,6 +162,8 @@ public class MutationComponentTest {
 
     @Test
     public void addProjectToUser() throws Exception {
+        when(userService.getUser(anyLong())).thenReturn(user);
+        when(projectService.getProject(anyLong())).thenReturn(project);
         when(userService.addProjectToUser(any(), any())).thenReturn(user);
 
         User user = mutationComponent.addProjectToUser(1L, 2L);
@@ -173,28 +173,41 @@ public class MutationComponentTest {
     }
 
     @Test
-    public void addProjectToUser_exception() throws Exception {
-        when(userService.addProjectToUser(any(), any()))
-                .thenThrow(InvalidRecordExeption.class)
-                .thenThrow(InvalidUserException.class);
+    public void addProjectToUser_invalidUser() throws Exception {
+        when(userService.getUser(anyLong())).thenReturn(null);
 
-        User user = null;
+        User updatedUser = null;
         try {
-            user = mutationComponent.addProjectToUser(1L, 2L);
-            failBecauseExceptionWasNotThrown(InvalidRecordExeption.class);
-        } catch (InvalidRecordExeption e) {
-            // Pass
-        }
-
-        try {
-            user = mutationComponent.addProjectToUser(1L, 2L);
+            updatedUser = mutationComponent.addProjectToUser(1L, 1L);
             failBecauseExceptionWasNotThrown(InvalidUserException.class);
         } catch (InvalidUserException e) {
             // Pass
         }
 
-        verify(userService, times(2)).addProjectToUser(any(), any());
-        assertNull(user);
+        verify(userService, times(1)).getUser(anyLong());
+        verify(userService, never()).addProjectToUser(any(), any());
+        verify(projectService, never()).getProject(anyLong());
+        assertNull(updatedUser);
+    }
+
+    @Test
+    public void addProjectToUser_invalidProject() throws Exception {
+        when(userService.getUser(anyLong())).thenReturn(user);
+        when(projectService.getProject(anyLong())).thenReturn(null);
+
+        User updatedUser = null;
+        try {
+            updatedUser = mutationComponent.addProjectToUser(1L, 1L);
+            failBecauseExceptionWasNotThrown(InvalidRecordExeption.class);
+        } catch (InvalidRecordExeption e) {
+            // Pass
+        }
+
+        verify(userService, times(1)).getUser(anyLong());
+        verify(userService, never()).addProjectToUser(any(), any());
+        verify(projectService, times(1)).getProject(anyLong());
+        assertNull(updatedUser);
+
     }
 
 
@@ -221,8 +234,6 @@ public class MutationComponentTest {
         projectInput = new ProjectInput();
         projectInput.setDescription("description");
         projectInput.setName("name");
-        projectInput.setCreatedById(1L);
-        projectInput.setCreatedOn(new Date());
 
         this.user = new User("username", "password", "email", "name");
         this.project = new Project("name", "description", user, new Date());
