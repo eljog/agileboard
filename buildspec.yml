@@ -1,0 +1,10 @@
+version: 0.0.1
+phases:
+  build:
+    commands:
+      - gradle build
+artifacts:
+  files:
+    - appspec.yml
+    - build/libs/agileboard-0.0.1.jar
+    - scripts/*
