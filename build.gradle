@@ -38,8 +38,7 @@ dependencies {
 	// Additional Libraries
 
 	// https://mvnrepository.com/artifact/com.h2database/h2
-	testCompileOnly group: 'com.h2database', name: 'h2', version: '1.4.197'
-
+	testCompile group: 'com.h2database', name: 'h2', version: '1.4.197'
 
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: "${springBootVersion}"
