@@ -2,7 +2,7 @@ version: 0.1
 phases:
   build:
     commands:
-      - gradle build -x test
+      - gradle build
 artifacts:
   files:
     - appspec.yml
