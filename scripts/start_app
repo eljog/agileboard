@@ -1,0 +1,2 @@
+#!/bin/bash
+nohup java -jar apps/agileboard/agileboard-0.0.1.jar >> log.log &

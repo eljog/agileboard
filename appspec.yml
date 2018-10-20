@@ -1,0 +1,14 @@
+version: 0.0.1
+os: linux
+files:
+  - source: /agileboard-0.0.1.jar
+    destination: /apps/agileboard/
+hooks:
+  BeforeInstall:
+    - location: scripts/setup_directory
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_app
+      timeout: 300
+      runas: root
