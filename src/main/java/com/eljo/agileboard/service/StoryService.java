@@ -41,6 +41,10 @@ public class StoryService {
         return storyRepository.findAll();
     }
 
+    public Iterable<Story> fetchStoriesByProject(Project project) throws InvalidRecordExeption {
+        return storyRepository.findByProject(project);
+    }
+
     public Story createOrUpdateStory(Story story) throws InvalidRecordExeption {
         try {
             isValidStory(story);
@@ -70,27 +74,27 @@ public class StoryService {
     }
 
     private Story updateValues(Story existingStory, Story story) {
-        if(story.getName() != null) {
+        if (story.getName() != null) {
             existingStory.setName(story.getName());
         }
 
-        if(story.getProject() != null) {
+        if (story.getProject() != null) {
             existingStory.setProject(story.getProject());
         }
 
-        if(story.getOwner() != null) {
+        if (story.getOwner() != null) {
             existingStory.setOwner(story.getOwner());
         }
 
-        if(story.getDetails() != null) {
+        if (story.getDetails() != null) {
             existingStory.setDetails(story.getDetails());
         }
 
-        if(story.getPoints() != null) {
+        if (story.getPoints() != null) {
             existingStory.setPoints(story.getPoints());
         }
 
-        if(story.getStatus() != null) {
+        if (story.getStatus() != null) {
             existingStory.setStatus(story.getStatus());
         }
 

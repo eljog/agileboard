@@ -14,6 +14,10 @@ public class InvalidRecordExeption extends AgileBoardGraphQLException {
         super(message);
     }
 
+    public InvalidRecordExeption(Throwable rootCause) {
+        super(rootCause);
+    }
+
     @Override
     public ErrorType getErrorType() {
         return ErrorType.ValidationError;

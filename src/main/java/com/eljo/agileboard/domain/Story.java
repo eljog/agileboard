@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * Created by Eljo.George on 10/7/2018.
@@ -23,6 +25,8 @@ public class Story {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String storyNumber;
 
+    @NotBlank
+    @Size(max = 250, message = "Story name should not exceed 250 characters.")
     private String name;
 
     @Column(columnDefinition="TEXT")

@@ -11,4 +11,8 @@ public class AgileBoardException extends Exception {
     public AgileBoardException(String message) {
         super(message);
     }
+
+    public AgileBoardException(Throwable rootCause) {
+        super(rootCause);
+    }
 }

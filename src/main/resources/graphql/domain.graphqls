@@ -6,13 +6,14 @@ schema {
 type Query {
     getUsers: [User]
     getUser(id: ID): User
-    getUsersByProject(projectId: Int): [User]
+    getUsersByProject(projectId: Int!): [User]
 
     getInitiatives: [Initiative]
     getInitiative(id: ID): Initiative
 
     getStories: [Story]
     getStory(id: ID): Story
+    getStoriesByProject(projectId: Int!): [Story]
 
     getProjects: [Project]
     getProject(id: ID): Project

@@ -18,6 +18,10 @@ public abstract class AgileBoardGraphQLException extends AgileBoardException imp
         super(message);
     }
 
+    public AgileBoardGraphQLException(Throwable rootCause) {
+        super(rootCause);
+    }
+
     @Override
     public List<SourceLocation> getLocations() {
         return null;

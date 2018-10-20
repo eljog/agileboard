@@ -38,11 +38,7 @@ public class ProjectService {
     }
 
     public Project createOrUpdateProject(Project project) throws InvalidRecordExeption, InvalidUserException {
-        try {
-            isValidProject(project);
-        } catch (InvalidUserException e) {
-            throw new InvalidRecordExeption("Invalid Project record!", e);
-        }
+        isValidProject(project);
 
         if (project.getId() != null) {
             return this.updateProject(project);
@@ -71,7 +67,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    void isValidProject(Project project) throws InvalidRecordExeption, InvalidUserException {
+    void isValidProject(Project project) throws InvalidRecordExeption {
         if (project == null) {
             throw new InvalidRecordExeption("Invalid Project record!");
         }

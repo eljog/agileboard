@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -104,39 +105,15 @@ public class ProjectServiceTest {
     }
 
     @Test
-    public void createProject_withInvalidOwner() throws Exception {
-        when(userService.getCurrentUser()).thenThrow(InvalidUserException.class);
-
-        Project savedProject = null;
-        try {
-            savedProject = projectService.createOrUpdateProject(newProject);
-            assertTrue(false);
-        } catch (InvalidRecordExeption e) {
-            if (e.getCause() instanceof InvalidUserException) {
-                assertTrue(true);
-            } else {
-                assertTrue(false);
-            }
-        } catch (Exception e) {
-            assertTrue(false);
-        }
-
-        verify(projectRepository, never()).save(any());
-        assertNull(savedProject);
-    }
-
-    @Test
     public void createProject_withoutMandatoryFields() throws Exception {
         newProject.setName(null);
 
         Project savedProject = null;
         try {
             savedProject = projectService.createOrUpdateProject(newProject);
-            assertTrue(false);
+            failBecauseExceptionWasNotThrown(InvalidRecordExeption.class);
         } catch (InvalidRecordExeption e) {
-            assertTrue(true);
-        } catch (Exception e) {
-            assertTrue(false);
+            // Passed
         }
 
         verify(projectRepository, never()).save(any());
@@ -147,20 +124,18 @@ public class ProjectServiceTest {
     public void updateProject() throws Exception {
         when(projectRepository.save(any())).thenReturn(existingProject);
         when(projectRepository.findById(anyLong())).thenReturn(Optional.ofNullable(existingProject));
-        when(userService.getCurrentUser()).thenReturn(member);
 
         Project savedProject = projectService.createOrUpdateProject(existingProject);
 
         verify(projectRepository, times(1)).save(any());
-        verify(userService, times(1)).getCurrentUser();
+        verify(userService, never()).getCurrentUser();
         assertNotNull(savedProject);
-        assertThat(savedProject.getId()).isGreaterThan(0L);
+        assertNotNull(savedProject.getId());
     }
 
     @Test
     public void updateProject_nonExisting() throws Exception {
         when(projectRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
-        when(userService.getCurrentUser()).thenReturn(member);
 
         Project savedProject = null;
         try {
@@ -172,29 +147,7 @@ public class ProjectServiceTest {
 
         verify(projectRepository, never()).save(any());
         verify(projectRepository, times(1)).findById(anyLong());
-        verify(userService, times(1)).getCurrentUser();
-        assertNull(savedProject);
-    }
-
-    @Test
-    public void updateProject_withInvalidCreator() throws Exception {
-        when(userService.getCurrentUser()).thenThrow(InvalidUserException.class);
-
-        Project savedProject = null;
-        try {
-            savedProject = projectService.createOrUpdateProject(existingProject);
-            assertTrue(false);
-        } catch (InvalidRecordExeption e) {
-            if (e.getCause() instanceof InvalidUserException) {
-                assertTrue(true);
-            } else {
-                assertTrue(false);
-            }
-        } catch (Exception e) {
-            assertTrue(false);
-        }
-
-        verify(projectRepository, never()).save(any());
+        verify(userService, never()).getCurrentUser();
         assertNull(savedProject);
     }
 
