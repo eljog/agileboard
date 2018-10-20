@@ -1,4 +1,4 @@
-version: 0.0.1
+version: 0.1
 phases:
   build:
     commands:
@@ -6,5 +6,5 @@ phases:
 artifacts:
   files:
     - appspec.yml
-    - build/libs/agileboard-0.0.1.jar
+    - build/libs/agileboard-0.1.jar
     - scripts/*
