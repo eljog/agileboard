@@ -1,7 +1,7 @@
 version: 0.1
 os: linux
 files:
-  - source: /agileboard-0.1.jar
+  - source: agileboard-0.1.jar
     destination: /apps/agileboard/
 hooks:
   BeforeInstall:
