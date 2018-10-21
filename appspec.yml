@@ -1,8 +1,8 @@
 version: 0.0
 os: linux
 files:
-  - source: build/libs/agileboard-0.1.jar
-    destination: /apps/agileboard/agileboard-0.1.jar
+  - source: build/libs/
+    destination: /apps/agileboard/
 hooks:
   BeforeInstall:
     - location: scripts/setup_directory
