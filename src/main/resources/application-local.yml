@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/agileboard?currentSchema=agileboard
+    username: postgres
+    password: eljo
+
+  jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: create-drop
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  shutdown:
+    enabled: true
+  endpoint:
+    shutdown:
+      enabled: true
+
+app:
+  jwtSecret: JWTSuperSecretKey
+  jwtExpirationInMs: 604800000
