@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://agileboard.clwrgjeerte3.us-east-2.rds.amazonaws.com:5432/agileboard?currentSchema=agileboard
+    username: agileboard
+    password: agileboard
+
+  jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: update
+
+app:
+  jwtSecret: JWTSuperSecretKey
+  jwtExpirationInMs: 604800000
