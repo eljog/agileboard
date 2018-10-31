@@ -56,11 +56,16 @@ public class ProjectService {
     }
 
     private Project updateProject(Project project) throws InvalidRecordExeption {
-        if (!projectRepository.findById(project.getId()).isPresent()) {
+
+        Optional<Project> projectOptional = projectRepository.findById(project.getId());
+        if (!projectOptional.isPresent()) {
             throw new InvalidRecordExeption("No Project exists with given id: " + project.getId());
         }
+        Project existingProject = projectOptional.get();
+        existingProject.setName(project.getName());
+        existingProject.setDescription(project.getDescription());
 
-        return saveProject(project);
+        return saveProject(existingProject);
     }
 
     private Project saveProject(Project project) {

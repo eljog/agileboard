@@ -67,4 +67,8 @@ public class UserService {
         }
         throw new InvalidUserException("Unable to find authenticated user");
     }
+
+    public Iterable<User> getUsersWithoutProject() {
+        return userRepository.findAllByProjectIsNull();
+    }
 }
