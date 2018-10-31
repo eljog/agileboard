@@ -70,6 +70,10 @@ public class QueryComponent implements GraphQLQueryResolver {
         throw new InvalidRecordExeption("No Project exists with given id: " + projectId);
     }
 
+    public Iterable<User> getUsersWithoutProject() {
+        return userService.getUsersWithoutProject();
+    }
+
     public Iterable<Story> getStoriesByProject(Long projectId) throws InvalidRecordExeption {
         Project project = projectService.getProject(projectId);
         if (project != null) {

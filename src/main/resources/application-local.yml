@@ -20,6 +20,5 @@ management:
     shutdown:
       enabled: true
 
-app:
-  jwtSecret: JWTSuperSecretKey
-  jwtExpirationInMs: 604800000
+server:
+  port: 8888
