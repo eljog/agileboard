@@ -4,7 +4,7 @@
 
 case "$1" in
 start)
-   nohup java -Dspring.profiles.active=aws -jar /apps/agileboard/agileboard-0.1.jar >> /apps/agileboard/logs/agileboard.log &
+   nohup java -Dspring.profiles.active=aws -jar /apps/agileboard/agileboard-0.1.jar >> /apps/agileboard/logs/agileboard.log 2>&1&
    echo $!>/var/run/agileboard/agileboard.pid
    echo agileboard is running, pid=`cat /var/run/agileboard/agileboard.pid`
    ;;
