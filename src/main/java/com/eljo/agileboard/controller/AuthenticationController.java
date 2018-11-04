@@ -47,8 +47,7 @@ public class AuthenticationController {
     @Autowired
     JwtTokenProvider tokenProvider;
 
-    // Todo: Later remove with flyway or manual insery
-    @PostConstruct
+    // Todo: Later remove with flyway or manual insert
     public void setRole_Temp() {
         roleRepository.save(new Role(RoleName.ROLE_USER));
         roleRepository.save(new Role(RoleName.ROLE_ADMIN));
