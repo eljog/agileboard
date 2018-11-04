@@ -4,7 +4,7 @@
 
 case "$1" in
 start)
-   java -Dspring.profiles.active=aws -jar /apps/agileboard/agileboard-0.1.jar >> /apps/agileboard/logs/agileboard.log &
+   nohup java -Dspring.profiles.active=aws -jar /apps/agileboard/agileboard-0.1.jar >> /apps/agileboard/logs/agileboard.log &
    echo $!>/var/run/agileboard/agileboard.pid
    echo agileboard is running, pid=`cat /var/run/agileboard/agileboard.pid`
    ;;
@@ -29,4 +29,5 @@ status)
    echo "Usage: $0 {start|stop|status|restart}"
 esac
 
+echo Request processed successfully
 exit 0
