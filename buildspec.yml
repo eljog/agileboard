@@ -8,3 +8,4 @@ artifacts:
     - appspec.yml
     - build/libs/agileboard-0.1.jar
     - scripts/*
+    - agileboard.sh

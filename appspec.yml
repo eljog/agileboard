@@ -4,6 +4,8 @@ os: linux
 files:
   - source: build/libs/
     destination: /apps/agileboard/
+  - source: agileboard.sh
+    destination: /apps/agileboard/
 
 hooks:
   ApplicationStop:
