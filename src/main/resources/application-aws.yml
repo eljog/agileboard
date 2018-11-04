@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://agileboard.clwrgjeerte3.us-east-2.rds.amazonaws.com:5432/agileboard?currentSchema=agileboard
+    username: agileboard
+    password: agileboard
+
+  jpa:
+      show-sql: false
+      hibernate:
+        ddl-auto: validate
+
+server:
+  port: 8888

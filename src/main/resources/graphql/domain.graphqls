@@ -7,6 +7,7 @@ type Query {
     getUsers: [User]
     getUser(id: ID): User
     getUsersByProject(projectId: Int!): [User]
+    getUsersWithoutProject: [User]
 
     getInitiatives: [Initiative]
     getInitiative(id: ID): Initiative

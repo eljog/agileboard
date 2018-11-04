@@ -47,8 +47,7 @@ public class AuthenticationController {
     @Autowired
     JwtTokenProvider tokenProvider;
 
-    // Todo: Later remove with flyway or manual insery
-//    @PostConstruct
+    // Todo: Later remove with flyway or manual insert
     public void setRole_Temp() {
         roleRepository.save(new Role(RoleName.ROLE_USER));
         roleRepository.save(new Role(RoleName.ROLE_ADMIN));
@@ -99,7 +98,7 @@ public class AuthenticationController {
                 .fromCurrentContextPath().path("/api/users/{username}")
                 .buildAndExpand(result.getUsername()).toUri();
 
-        return ResponseEntity.created(location).body("User registered successfully");
+        return ResponseEntity.created(location).body("You have registered successfully. Now you can login with your username/email and password.");
     }
 
     @RequestMapping(value = "/username", method = RequestMethod.GET)
