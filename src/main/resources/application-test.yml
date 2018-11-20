@@ -9,6 +9,8 @@ spring:
       show-sql: true
       hibernate:
         ddl-auto: create-drop
+  flyway:
+    enabled: false
 
 app:
   jwtSecret: JWTSuperSecretKey

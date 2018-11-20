@@ -10,6 +10,9 @@ spring:
       hibernate:
         ddl-auto: create-drop
 
+  flyway:
+    enabled: false
+
 app:
   jwtSecret: JWTSuperSecretKey
   jwtExpirationInMs: 604800000
