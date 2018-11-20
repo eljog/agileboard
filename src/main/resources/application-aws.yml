@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://agileboard.clwrgjeerte3.us-east-2.rds.amazonaws.com:5432/agileboard?currentSchema=agileboard
+    url: jdbc:postgresql://agileboard-postgres.clwrgjeerte3.us-east-2.rds.amazonaws.com:5432/agileboard?currentSchema=agileboard
     username: agileboard
     password: agileboard
 

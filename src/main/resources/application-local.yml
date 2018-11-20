@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/agileboard?currentSchema=agileboard
-    username: postgres
-    password: eljo
+    username: agileboard
+    password: agileboard
 
   jpa:
       show-sql: true
