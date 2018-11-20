@@ -4,6 +4,7 @@ buildscript {
 		jjwtVersion = '0.9.1'
 		graphQLv4 = '4.4.0'
 		graphQLv5 = '5.0.2'
+		flywayCore = '5.2.1'
 	}
 	repositories {
 		mavenCentral()
@@ -73,5 +74,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.graphql-java/graphiql-spring-boot-starter
 	compile group: 'com.graphql-java', name: 'graphiql-spring-boot-starter', version: "${graphQLv5}"
 
+	// https://mvnrepository.com/artifact/org.flywaydb/flyway-core
+	compile group: 'org.flywaydb', name: 'flyway-core', version: "${flywayCore}"
 
 }
